@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("${api.prefix}/orders")
 public class OrderController {
+    // Create a new order
     @PostMapping("")
     public ResponseEntity<?> createOrder(
             @Valid @RequestBody OrderDTO orderDTO,
@@ -24,11 +25,12 @@ public class OrderController {
                         .toList();
                 return ResponseEntity.badRequest().body(errorMessages);
             }
-            return ResponseEntity.ok("Create Order successfully!");
+            return ResponseEntity.ok("Create order successfully!");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    // Get order info by user id
     @GetMapping("/{user_id}")
     public ResponseEntity<?> getOrders(@Valid @PathVariable("user_id") Long userId) {
         try {
@@ -37,16 +39,16 @@ public class OrderController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    // Update an order by order id
     @PutMapping("/{id}")
-    //PUT http://localhost:8088/api/v1/orders/2
     public ResponseEntity<?> updateOrder(
             @Valid @PathVariable long id,
             @Valid @RequestBody OrderDTO orderDTO) {
         return ResponseEntity.ok("Cập nhật thông tin 1 order");
     }
+    // Delete an order by order id
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteOrder(@Valid @PathVariable Long id) {
-        //xóa mềm => cập nhật trường active = false
         return ResponseEntity.ok("Order deleted successfully.");
     }
 }

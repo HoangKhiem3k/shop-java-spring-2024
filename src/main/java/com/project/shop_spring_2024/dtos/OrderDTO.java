@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-@Data // Tương tự toString()
+@Data
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,7 +16,7 @@ public class OrderDTO {
     @Min(value = 1, message = "User's ID must be > 0")
     private Long userId;
 
-    @JsonProperty("fullname")
+    @JsonProperty("full_name")
     private String fullName;
 
     private String email;
@@ -31,7 +31,7 @@ public class OrderDTO {
     private String note;
 
     @JsonProperty("total_money")
-    @Min(value = 0, message = "Total money must be >= 0")
+    @Min(value = 0, message = "Total money must be greater than or equal to 0")
     private Float totalMoney;
 
     @JsonProperty("shipping_method")

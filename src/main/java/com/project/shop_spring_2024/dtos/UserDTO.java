@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDTO {
-    @JsonProperty("fullname")
+    @JsonProperty("full_name")
     private String fullName;
 
     @JsonProperty("phone_number")
@@ -37,6 +37,7 @@ public class UserDTO {
     @JsonProperty("google_account_id")
     private int googleAccountId;
 
-    @NotNull(message = "Role ID cannot be null")
+    @NotNull(message = "Role ID is required")
+    @JsonProperty("role_id")
     private Long roleId;
 }

@@ -1,7 +1,10 @@
 package com.project.shop_spring_2024.controllers;
 
 import com.project.shop_spring_2024.dtos.ProductDTO;
+import com.project.shop_spring_2024.models.Product;
+import com.project.shop_spring_2024.services.Product.ProductService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +25,33 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("${api.prefix}/products")
-
+@RequiredArgsConstructor
 public class ProductController {
+    private final ProductService productService;
+
+    // Create a new product
+    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> createProduct(
+            @Valid @RequestBody ProductDTO productDTO,
+            BindingResult result
+    ) {
+        try {
+            if (result.hasErrors()) {
+                List<String> errorMessages = result.getFieldErrors()
+                        .stream()
+                        .map(FieldError::getDefaultMessage)
+                        .toList();
+                return ResponseEntity.badRequest().body(errorMessages);
+            }
+            Product newProductCreated = productService.createProduct(productDTO);
+            return ResponseEntity.ok(newProductCreated);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+
     // Get all products
     @GetMapping("") // http://localhost:8088/api/v1/products?page=1&limit=10
     public ResponseEntity<String> getAllProducts(@RequestParam("page") int page, @RequestParam("limit") int limit) {
@@ -36,42 +64,7 @@ public class ProductController {
         return ResponseEntity.ok("Product id: " + productId);
     }
 
-    // Create product
-    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createProduct(
-            @Valid @ModelAttribute ProductDTO productDTO,
-            BindingResult result
-    ) {
-        try {
-            if (result.hasErrors()) {
-                List<String> errorMessages = result.getFieldErrors().stream()
-                        // .map(fieldError -> fieldError.getDefaultMessage()) or
-                        .map(FieldError::getDefaultMessage).toList();
-                return ResponseEntity.badRequest().body(errorMessages);
-            }
-            List<MultipartFile> files = productDTO.getFiles();
-            files = files == null ? new ArrayList<MultipartFile>() : files;
-            for (MultipartFile file : files) {
-                if (file.getSize() == 0) {
-                    continue;
-                }
-                // Kiểm tra kích thước file và định dạng
-                if (file.getSize() > 10 * 1024 * 1024) { // Kích thước file > 10Mb
-                    return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body("File is to large! Maximum size is 10Mb");
-                }
-                String contentType = file.getContentType();
-                if (contentType == null || !contentType.startsWith("image/")) {
-                    return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("File must be an image!");
-                }
-                // Lưu file và cập nhật thumbnail trong DTO
-                String filename = storeFile(file);
-            }
 
-            return ResponseEntity.ok("Body: " + productDTO);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
 
     private String storeFile(MultipartFile file) throws IOException {
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
