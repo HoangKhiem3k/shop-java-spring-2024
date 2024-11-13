@@ -8,6 +8,7 @@ public class ShopSpring2024Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ShopSpring2024Application.class, args);
+		System.out.println("Server started successfully!!!");
 	}
 
 }
