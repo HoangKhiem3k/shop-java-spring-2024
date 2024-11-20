@@ -42,5 +42,6 @@ public class User extends BaseEntity{
     @JoinColumn(name = "role_id")
     private Role role;
 
+    @Column(name = "is_active")
     private boolean active;
 }
