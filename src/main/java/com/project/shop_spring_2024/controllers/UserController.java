@@ -42,9 +42,14 @@ public class UserController {
     }
     @PostMapping("/login")
     public ResponseEntity<String> login(
-            @Valid @RequestBody UserLoginDTO userLoginDTO) {
-        String token = userService.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword());
-        return ResponseEntity.ok(token);
+            @Valid @RequestBody UserLoginDTO userLoginDTO
+    ) {
+        try {
+            String token = userService.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword());
+            return ResponseEntity.ok(token);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }
 
